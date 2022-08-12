@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_keep_clone/db/notes_database.dart';
+import 'package:google_keep_clone/models/note_model.dart';
 
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({Key? key}) : super(key: key);
@@ -10,34 +10,51 @@ class AddNoteScreen extends StatefulWidget {
 }
 
 class _AddNoteScreenState extends State<AddNoteScreen> {
+  late String title = "";
+  late String content = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        leading: IconButton(
+          onPressed: () {
+            if (title == '' && content == '') {
+              debugPrint("No Data");
+            } else {
+              addNote(title, content);
+            }
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back),
+          splashRadius: 20,
+        ),
         elevation: 0,
         actions: [
           IconButton(
               onPressed: () {},
-              icon: Icon(Icons.push_pin_outlined),
+              icon: const Icon(Icons.push_pin_outlined),
               splashRadius: 20),
           IconButton(
               onPressed: () {},
-              icon: Icon(Icons.notification_add_outlined),
+              icon: const Icon(Icons.notification_add_outlined),
               splashRadius: 20),
           IconButton(
               onPressed: () {},
-              icon: Icon(Icons.archive_outlined),
+              icon: const Icon(Icons.archive_outlined),
               splashRadius: 20),
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         children: [
           TextFormField(
-            style: TextStyle(fontSize: 20),
+            style: const TextStyle(fontSize: 20),
             maxLines: 1,
-            decoration: InputDecoration(
+            onChanged: (value) => setState(() {
+              title = value;
+            }),
+            decoration: const InputDecoration(
               border: InputBorder.none,
               hintText: "Title",
               contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -46,7 +63,10 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           TextFormField(
             keyboardType: TextInputType.multiline,
             maxLines: null,
-            decoration: InputDecoration(
+            onChanged: (value) => setState(() {
+              content = value;
+            }),
+            decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: "Note",
                 contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0)),
@@ -58,16 +78,16 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           children: [
             IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.add_box_outlined),
+                icon: const Icon(Icons.add_box_outlined),
                 splashRadius: 20),
             IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.color_lens_outlined),
+                icon: const Icon(Icons.color_lens_outlined),
                 splashRadius: 20),
-            Spacer(),
-            Text("Edited Aug 7"),
-            Spacer(),
-            Opacity(
+            const Spacer(),
+            const Text("Edited Aug 7"),
+            const Spacer(),
+            const Opacity(
               opacity: 0,
               child: IconButton(
                   onPressed: null,
@@ -76,7 +96,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             ),
             IconButton(
               onPressed: () {},
-              icon: Icon(
+              icon: const Icon(
                 Icons.more_vert_outlined,
               ),
               splashRadius: 20,
@@ -85,5 +105,15 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> addNote(String title, String content) async {
+    final note = NoteModel(
+      title: title,
+      content: content,
+      createdTime: DateTime.now(),
+      color: 'red',
+    );
+    await NotesDatabase.instance.createNote(note);
   }
 }

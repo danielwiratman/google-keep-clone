@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_keep_clone/db/notes_database.dart';
 import 'package:google_keep_clone/mock_data.dart';
+import 'package:google_keep_clone/models/note_model.dart';
 import 'package:google_keep_clone/screens/add_note_screen.dart';
 
 class AlmostEndFloatFabLocation extends StandardFabLocation
@@ -39,6 +41,26 @@ class _HomeScreenState extends State<HomeScreen> {
   var rng = Random();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   var data = mockData;
+  List<NoteModel> notes = [];
+
+  Future<void> refreshNotes() async {
+    var listNotes = await NotesDatabase.instance.readAllNotes();
+    setState(() {
+      notes = listNotes;
+    });
+  }
+
+  @override
+  void initState() {
+    refreshNotes();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotesDatabase.instance.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,59 +76,70 @@ class _HomeScreenState extends State<HomeScreen> {
           buildAppBar(statusBarHeight, context),
           SliverPadding(
               padding: const EdgeInsets.all(15),
-              sliver: SliverMasonryGrid.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childCount: mockData.length,
-                itemBuilder: ((context, index) {
-                  int randHeight = rng.nextInt(100) + 100;
-                  int randInt = rng.nextInt(7);
-                  List<Color> colorsss = [
-                    Colors.red.shade900.withOpacity(0.5),
-                    Colors.yellow.shade900.withOpacity(0.5),
-                    Colors.blue.shade900.withOpacity(0.5),
-                    Colors.orange.shade900.withOpacity(0.5),
-                    Colors.green.shade900.withOpacity(0.5),
-                    Colors.cyan.shade900.withOpacity(0.5),
-                    Colors.pink.shade900.withOpacity(0.5),
-                  ];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AddNoteScreen()));
-                    },
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      decoration: BoxDecoration(
+              sliver: notes.isEmpty
+                  ? const SliverToBoxAdapter(
+                      child: Text("No Notes"),
+                    )
+                  : SliverMasonryGrid.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childCount: notes.length,
+                      itemBuilder: ((context, index) {
+                        // int randHeight = rng.nextInt(100) + 100;
+                        // int randInt = rng.nextInt(7);
+                        // List<Color> colorsss = [
+                        //   Colors.red.shade900.withOpacity(0.5),
+                        //   Colors.yellow.shade900.withOpacity(0.5),
+                        //   Colors.blue.shade900.withOpacity(0.5),
+                        //   Colors.orange.shade900.withOpacity(0.5),
+                        //   Colors.green.shade900.withOpacity(0.5),
+                        //   Colors.cyan.shade900.withOpacity(0.5),
+                        //   Colors.pink.shade900.withOpacity(0.5),
+                        // ];
+                        return InkWell(
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const AddNoteScreen()),
+                            );
+                            refreshNotes();
+                          },
                           borderRadius: BorderRadius.circular(10),
-                          color: colorsss[randInt],
-                          border: Border.all(
-                              color: Theme.of(context)
-                                  .primaryColorLight
-                                  .withOpacity(0.4))),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              padding:
-                                  EdgeInsets.only(right: 10, left: 10, top: 10),
-                              child: Text(
-                                data[index]['title'],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 16),
-                              )),
-                          Divider(),
-                          Container(
-                              padding: EdgeInsets.only(
-                                  right: 10, left: 10, bottom: 10),
-                              child: Text(data[index]['description'])),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-              )),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.pink.shade900.withOpacity(0.5),
+                                border: Border.all(
+                                    color: Theme.of(context)
+                                        .primaryColorLight
+                                        .withOpacity(0.4))),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                      right: 10, left: 10, top: 10),
+                                  child: Text(
+                                    notes[index].title,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16),
+                                  ),
+                                ),
+                                const Divider(),
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                      right: 10, left: 10, bottom: 10),
+                                  child: Text(notes[index].content),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    )),
         ],
       ),
     );
@@ -114,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Drawer buildDrawer() => Drawer(
         child: Container(
-          padding: EdgeInsets.only(top: 16, right: 16),
+          padding: const EdgeInsets.only(top: 16, right: 16),
           child: ListView(
             children: [
               Padding(
@@ -123,20 +156,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   text: TextSpan(
                       text: 'D',
                       style: GoogleFonts.ubuntu(
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                           color: Color(0xff00a1f1),
                           fontWeight: FontWeight.w600,
                           fontSize: 24,
                         ),
                       ),
                       children: [
-                        letter('a', Color(0xfff65314)),
-                        letter('n', Color(0xffffbb00)),
-                        letter('i', Color(0xff00a1f1)),
-                        letter('e', Color(0xff7cbb00)),
-                        letter('l', Color(0xfff65314)),
-                        letter('\'', Color(0xffffbb00)),
-                        letter('s', Color(0xff00a1f1)),
+                        letter('a', const Color(0xfff65314)),
+                        letter('n', const Color(0xffffbb00)),
+                        letter('i', const Color(0xff00a1f1)),
+                        letter('e', const Color(0xff7cbb00)),
+                        letter('l', const Color(0xfff65314)),
+                        letter('\'', const Color(0xffffbb00)),
+                        letter('s', const Color(0xff00a1f1)),
                         TextSpan(
                           text: ' Keep',
                           style: GoogleFonts.ubuntu(
@@ -149,47 +182,47 @@ class _HomeScreenState extends State<HomeScreen> {
                       ]),
                 ),
               ),
-              Divider(),
+              const Divider(),
               ListTile(
-                visualDensity: VisualDensity(vertical: -3),
-                leading: Icon(Icons.lightbulb_outline),
-                title: Text("Notes"),
+                visualDensity: const VisualDensity(vertical: -3),
+                leading: const Icon(Icons.lightbulb_outline),
+                title: const Text("Notes"),
                 onTap: () {},
               ),
               ListTile(
-                visualDensity: VisualDensity(vertical: -3),
-                leading: Icon(Icons.notifications_none_outlined),
-                title: Text("Reminders"),
+                visualDensity: const VisualDensity(vertical: -3),
+                leading: const Icon(Icons.notifications_none_outlined),
+                title: const Text("Reminders"),
                 onTap: () {},
               ),
               ListTile(
-                visualDensity: VisualDensity(vertical: -3),
-                leading: Icon(Icons.add),
-                title: Text("Create new label"),
+                visualDensity: const VisualDensity(vertical: -3),
+                leading: const Icon(Icons.add),
+                title: const Text("Create new label"),
                 onTap: () {},
               ),
               ListTile(
-                visualDensity: VisualDensity(vertical: -3),
-                leading: Icon(Icons.archive_outlined),
-                title: Text("Archive"),
+                visualDensity: const VisualDensity(vertical: -3),
+                leading: const Icon(Icons.archive_outlined),
+                title: const Text("Archive"),
                 onTap: () {},
               ),
               ListTile(
-                visualDensity: VisualDensity(vertical: -3),
-                leading: Icon(Icons.delete_outline),
-                title: Text("Trash"),
+                visualDensity: const VisualDensity(vertical: -3),
+                leading: const Icon(Icons.delete_outline),
+                title: const Text("Trash"),
                 onTap: () {},
               ),
               ListTile(
-                visualDensity: VisualDensity(vertical: -3),
-                leading: Icon(Icons.settings),
-                title: Text("Settings"),
+                visualDensity: const VisualDensity(vertical: -3),
+                leading: const Icon(Icons.settings),
+                title: const Text("Settings"),
                 onTap: () {},
               ),
               ListTile(
-                visualDensity: VisualDensity(vertical: -3),
-                leading: Icon(Icons.help_outline),
-                title: Text("Help & feedback"),
+                visualDensity: const VisualDensity(vertical: -3),
+                leading: const Icon(Icons.help_outline),
+                title: const Text("Help & feedback"),
                 onTap: () {},
               ),
             ],
@@ -263,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {},
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
-                          padding: EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(5),
                           child: const CircleAvatar(
                             radius: 15,
                             backgroundImage:
@@ -286,9 +319,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   FloatingActionButton buildFloatingButton() {
     return FloatingActionButton(
-      onPressed: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => AddNoteScreen()));
+      onPressed: () async {
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const AddNoteScreen(),
+          ),
+        );
+        refreshNotes();
       },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
