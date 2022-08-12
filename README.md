@@ -6,4 +6,6 @@ In the productivity world, it is advised to always take notes on anything in you
 
 Here is the look of the app:
 
+![image](https://user-images.githubusercontent.com/74503671/184295485-22ea0854-3553-4058-aa72-04eac470431b.png)
+
 https://youtu.be/m1H7WsOtq6E
