@@ -8,4 +8,6 @@ Here is the look of the app:
 
 ![image](https://user-images.githubusercontent.com/74503671/184295485-22ea0854-3553-4058-aa72-04eac470431b.png)
 
+![image](https://user-images.githubusercontent.com/74503671/184295712-34ec2c4e-5f5b-4916-a601-772b4722c3a9.png)
+
 https://youtu.be/m1H7WsOtq6E
