@@ -1,16 +1,9 @@
-# google_keep_clone
+# GOOGLE KEEP CLONE
 
-A new Flutter project.
+In this project, I tried to clone the UI and some functionalities of my favorite app, Google Keep.
 
-## Getting Started
+In the productivity world, it is advised to always take notes on anything in your brain. This system is called the second brain system. The premise is that the brain is good at creating stuffs, but not good at saving/storing stuffs. While in the contrary, your phone cannot create stuff, but stores it easily.
 
-This project is a starting point for a Flutter application.
+Here is the look of the app:
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mgNAF_NrQcc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
