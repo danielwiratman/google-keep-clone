@@ -6,4 +6,4 @@ In the productivity world, it is advised to always take notes on anything in you
 
 Here is the look of the app:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/mgNAF_NrQcc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+https://youtu.be/m1H7WsOtq6E
