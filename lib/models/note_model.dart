@@ -5,8 +5,6 @@ class NoteModel {
   final DateTime createdTime;
   final String color;
 
-  static List<String> options = ['red', 'green', 'blue', 'yellow'];
-
   NoteModel({
     this.id,
     required this.title,

@@ -86,35 +86,56 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisSpacing: 8,
                       childCount: notes.length,
                       itemBuilder: ((context, index) {
-                        // int randHeight = rng.nextInt(100) + 100;
-                        // int randInt = rng.nextInt(7);
-                        // List<Color> colorsss = [
-                        //   Colors.red.shade900.withOpacity(0.5),
-                        //   Colors.yellow.shade900.withOpacity(0.5),
-                        //   Colors.blue.shade900.withOpacity(0.5),
-                        //   Colors.orange.shade900.withOpacity(0.5),
-                        //   Colors.green.shade900.withOpacity(0.5),
-                        //   Colors.cyan.shade900.withOpacity(0.5),
-                        //   Colors.pink.shade900.withOpacity(0.5),
-                        // ];
+                        Color noteBgColor = Colors.transparent;
+                        String color = notes[index].color;
+                        switch (color) {
+                          case 'red':
+                            noteBgColor = Colors.red.shade700;
+                            break;
+                          case 'orange':
+                            noteBgColor = Colors.orange.shade700;
+                            break;
+                          case 'yellow':
+                            noteBgColor = Colors.yellow.shade700;
+                            break;
+                          case 'green':
+                            noteBgColor = Colors.green.shade700;
+                            break;
+                          case 'blue':
+                            noteBgColor = Colors.blue.shade700;
+                            break;
+                          case 'violet':
+                            noteBgColor = Colors.purple.shade700;
+                            break;
+                          case 'purple':
+                            noteBgColor = Colors.deepPurple.shade700;
+                            break;
+                          default:
+                        }
+
                         return InkWell(
                           onTap: () async {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const AddNoteScreen()),
+                                builder: (context) => AddNoteScreen(
+                                  note: notes[index],
+                                ),
+                              ),
                             );
                             refreshNotes();
                           },
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.pink.shade900.withOpacity(0.5),
-                                border: Border.all(
-                                    color: Theme.of(context)
-                                        .primaryColorLight
-                                        .withOpacity(0.4))),
+                              borderRadius: BorderRadius.circular(10),
+                              color: noteBgColor.withOpacity(0.5),
+                              border: Border.all(
+                                color: Theme.of(context)
+                                    .primaryColorLight
+                                    .withOpacity(0.4),
+                              ),
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
